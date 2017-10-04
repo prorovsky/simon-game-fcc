@@ -1,0 +1,50 @@
+.game-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.block-colors {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: auto 20% 20% auto;
+    grid-template-rows: 200px 200px;
+}
+
+.red {
+    grid-column-start: 2;
+    background-color: darkred;
+}
+
+.green {
+    background-color: darkgreen;
+}
+
+.blue {
+    grid-column-start: 2;
+    background-color: darkblue;
+}
+
+.yellow {
+    background-color: darkorange;
+}
+
+.red:hover {
+    background-color: red;
+}
+
+.green:hover {
+    background-color: green;
+}
+
+.blue:hover {
+    background-color: blue;
+}
+
+.yellow:hover {
+    background-color: orange;
+}
+
+.game-messages {
+    display: flex;
+    justify-content: center;
+}
