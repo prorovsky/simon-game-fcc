@@ -5,46 +5,42 @@
 
 .block-colors {
     margin-top: 50px;
+    margin-bottom: 50px;
     display: grid;
     grid-template-columns: auto 20% 20% auto;
     grid-template-rows: 200px 200px;
+    grid-gap: 1rem;
 }
 
-.red {
+#red {
     grid-column-start: 2;
     background-color: darkred;
 }
 
-.green {
+#green {
     background-color: darkgreen;
 }
 
-.blue {
+#blue {
     grid-column-start: 2;
     background-color: darkblue;
 }
 
-.yellow {
+#orange {
     background-color: darkorange;
 }
 
-.red:hover {
-    background-color: red;
-}
-
-.green:hover {
-    background-color: green;
-}
-
-.blue:hover {
-    background-color: blue;
-}
-
-.yellow:hover {
-    background-color: orange;
+#count {
+    margin: 0 10px;
 }
 
 .game-messages {
     display: flex;
     justify-content: center;
+}
+
+@media (max-width: 700px) {
+    .block-colors {
+        grid-template-columns: auto 45% 45% auto;
+    }
 }
