@@ -25,7 +25,44 @@ startButton.addEventListener("click", startGame);
 
 function startGame(event) {
     console.log('game started');
-    
+    var arrayOfTurns = generateSequence(15);
+    for(let [index, turn] of arrayOfTurns.entries()) {
+        // run sequence
+        setTimeout(activateBlock.bind(null, turn), 1000 * index);
+    }
+
+}
+
+//
+function generateSequence(num) {
+    var result = [];
+    for(let i = 0; i < num; i++) {
+        result.push(generateRandomNumber(4));
+    }
+    return result;
+}
+
+//
+function activateBlock(num) {
+    switch(num) {
+        case 0: 
+            changePropertyOfBlockAI(greenBlock);
+            break;
+        case 1: 
+            changePropertyOfBlockAI(redBlock);
+            break;
+        case 2: 
+            changePropertyOfBlockAI(blueBlock);
+            break;
+        case 3: 
+            changePropertyOfBlockAI(orangeBlock);
+            break;
+    }
+}
+
+//
+function generateRandomNumber(max) {
+    return Math.floor(Math.random() * max);
 }
 
 function changePropertyOfBlock(event) {
@@ -33,6 +70,14 @@ function changePropertyOfBlock(event) {
     changeSizeOfBlock(event.target);
     disableEvents();
     resetBlockBack(event.target);
+}
+
+//
+function changePropertyOfBlockAI(block) {
+    changeColorOfBlock(block);
+    changeSizeOfBlock(block);
+    disableEvents();
+    resetBlockBack(block);
 }
 
 function resetBlockBack(colorBlock) {
