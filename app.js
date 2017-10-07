@@ -1,7 +1,11 @@
+"use strict";
+
 const greenBlock = document.querySelector("#green"),
       redBlock = document.querySelector("#red"),
       orangeBlock = document.querySelector("#orange"),
-      blueBlock = document.querySelector("#blue");
+      blueBlock = document.querySelector("#blue"),
+      startButton = document.querySelector("#start"),
+      resetButton = document.querySelector("#reset");
 
 greenBlock.originColor = "darkgreen";
 greenBlock.newColor = "green";
@@ -16,6 +20,13 @@ greenBlock.addEventListener("click", changePropertyOfBlock);
 redBlock.addEventListener("click", changePropertyOfBlock);
 blueBlock.addEventListener("click", changePropertyOfBlock);
 orangeBlock.addEventListener("click", changePropertyOfBlock);
+
+startButton.addEventListener("click", startGame);
+
+function startGame(event) {
+    console.log('game started');
+    
+}
 
 function changePropertyOfBlock(event) {
     changeColorOfBlock(event.target);
