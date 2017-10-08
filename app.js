@@ -7,6 +7,8 @@ const greenBlock = document.querySelector("#green"),
       startButton = document.querySelector("#start"),
       resetButton = document.querySelector("#reset");
 
+let turn = 1; 
+
 greenBlock.originColor = "darkgreen";
 greenBlock.newColor = "green";
 redBlock.originColor = "darkred";
@@ -20,60 +22,59 @@ greenBlock.addEventListener("click", changePropertyOfBlock);
 redBlock.addEventListener("click", changePropertyOfBlock);
 blueBlock.addEventListener("click", changePropertyOfBlock);
 orangeBlock.addEventListener("click", changePropertyOfBlock);
-
 startButton.addEventListener("click", startGame);
+
+// TODO: variable turn decide how many numbers will be displayed
+// create array playerNumbers when player click block this array add number to it
+// compare sequence and playerNumbers if they equal then turn++ if not equal then start again
 
 function startGame(event) {
     console.log('game started');
-    var arrayOfTurns = generateSequence(15);
-    for(let [index, turn] of arrayOfTurns.entries()) {
-        // run sequence
-        setTimeout(activateBlock.bind(null, turn), 1000 * index);
-    }
-
+    const generatedNumbers = generateSequence(20);
+    runSequence(generatedNumbers);
 }
 
-//
 function generateSequence(num) {
-    var result = [];
+    const result = [];
     for(let i = 0; i < num; i++) {
         result.push(generateRandomNumber(4));
     }
     return result;
 }
 
-//
-function activateBlock(num) {
-    switch(num) {
-        case 0: 
-            changePropertyOfBlockAI(greenBlock);
-            break;
-        case 1: 
-            changePropertyOfBlockAI(redBlock);
-            break;
-        case 2: 
-            changePropertyOfBlockAI(blueBlock);
-            break;
-        case 3: 
-            changePropertyOfBlockAI(orangeBlock);
-            break;
-    }
-}
-
-//
 function generateRandomNumber(max) {
     return Math.floor(Math.random() * max);
 }
 
-function changePropertyOfBlock(event) {
-    changeColorOfBlock(event.target);
-    changeSizeOfBlock(event.target);
-    disableEvents();
-    resetBlockBack(event.target);
+function runSequence(numbers) {
+    for(let [index, number] of numbers.entries()) {
+        setTimeout(activateBlockAI.bind(null, number), 1000 * index);
+    }
 }
 
-//
-function changePropertyOfBlockAI(block) {
+function activateBlockAI(num) {
+    switch(num) {
+        case 0: 
+            changePropertyOfBlock(greenBlock);
+            break;
+        case 1: 
+            changePropertyOfBlock(redBlock);
+            break;
+        case 2: 
+            changePropertyOfBlock(blueBlock);
+            break;
+        case 3: 
+            changePropertyOfBlock(orangeBlock);
+            break;
+    }
+}
+
+function changePropertyOfBlock(event) {
+    const block = event.target ? event.target : event;
+    change(block);    
+}
+
+function change(block) {
     changeColorOfBlock(block);
     changeSizeOfBlock(block);
     disableEvents();
