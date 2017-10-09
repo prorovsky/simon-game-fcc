@@ -12,6 +12,7 @@ let turn = 1;
 //
 let currentNumbers;
 let playerNumbers;
+let generatedNumbers;
 
 greenBlock.originColor = "darkgreen";
 greenBlock.newColor = "green";
@@ -33,14 +34,12 @@ orangeBlock.addEventListener("click", changePropertyOfBlock);
 startButton.addEventListener("click", startGame);
 
 function startGame(event) {
-    const generatedNumbers = generateSequence(20);
+    generatedNumbers = generateSequence(20);
     playerNumbers = [];
     
     // game loop
         currentNumbers = generatedNumbers.slice(0, turn);
         runSequence(currentNumbers);
-        playerNumbers = [];
-    
 }
 
 function generateSequence(num) {
@@ -73,16 +72,30 @@ function changePlayer(block) {
     change(block);
     //
     playerNumbers.push(block.number);
+    console.log('currentNumbers', currentNumbers);
+    console.log('playerNumbers', playerNumbers);
     if(isSame(currentNumbers, playerNumbers)) {
         console.log('good they same');
         turn++;
         currentNumbers = generatedNumbers.slice(0, turn);
-        runSequence(currentNumbers);
+        // delay when player complete sequence
+        setTimeout(runSequence.bind(null, currentNumbers), 1000);
+        playerNumbers.length = 0;
+    } else if(!compareArraySeq(currentNumbers, playerNumbers)) {
+        playerNumbers.length = 0;
+        // delay and run this sequence again
+        setTimeout(runSequence.bind(null, currentNumbers), 1000);
+        console.log('bad');
+        // then get here message about wrong sequence
     }
+}
+// get better name to this function this is predicate 
+function compareArraySeq(arr1, arr2) {
+    return arr1.slice(0, arr2.length).join(' ') == arr2.slice(0, arr1.length).join(' ');
 }
 
 function isSame(arr1, arr2) {
-    return arr1.length && arr2.length && arr1.every((el, index) => {
+    return arr1.every((el, index) => {
        return el === arr2[index];
     });
 }
