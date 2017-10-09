@@ -8,16 +8,23 @@ const greenBlock = document.querySelector("#green"),
       resetButton = document.querySelector("#reset"),
       arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock];
 
-let turn = 1; 
+let turn = 1;
+//
+let currentNumbers;
+let playerNumbers;
 
 greenBlock.originColor = "darkgreen";
 greenBlock.newColor = "green";
+greenBlock.number = 0;
 redBlock.originColor = "darkred";
 redBlock.newColor = "red";
+redBlock.number = 1;
 blueBlock.originColor = "darkblue";
 blueBlock.newColor = "blue";
+blueBlock.number = 2;
 orangeBlock.originColor = "darkorange";
 orangeBlock.newColor = "orange";
+orangeBlock.number = 3;
 
 greenBlock.addEventListener("click", changePropertyOfBlock);
 redBlock.addEventListener("click", changePropertyOfBlock);
@@ -25,14 +32,15 @@ blueBlock.addEventListener("click", changePropertyOfBlock);
 orangeBlock.addEventListener("click", changePropertyOfBlock);
 startButton.addEventListener("click", startGame);
 
-// TODO: variable turn decide how many numbers will be displayed
-// create array playerNumbers when player click block this array add number to it
-// compare sequence and playerNumbers if they equal then turn++ if not equal then start again
-
 function startGame(event) {
-    console.log('game started');
     const generatedNumbers = generateSequence(20);
-    runSequence(generatedNumbers);
+    playerNumbers = [];
+    
+    // game loop
+        currentNumbers = generatedNumbers.slice(0, turn);
+        runSequence(currentNumbers);
+        playerNumbers = [];
+    
 }
 
 function generateSequence(num) {
@@ -58,8 +66,25 @@ function activateBlockAI(num) {
 }
 
 function changePropertyOfBlock(event) {
-    const block = event.target ? event.target : event;
-    change(block);    
+    event.target ? changePlayer(event.target) : change(event);
+}
+
+function changePlayer(block) {
+    change(block);
+    //
+    playerNumbers.push(block.number);
+    if(isSame(currentNumbers, playerNumbers)) {
+        console.log('good they same');
+        turn++;
+        currentNumbers = generatedNumbers.slice(0, turn);
+        runSequence(currentNumbers);
+    }
+}
+
+function isSame(arr1, arr2) {
+    return arr1.length && arr2.length && arr1.every((el, index) => {
+       return el === arr2[index];
+    });
 }
 
 function change(block) {
