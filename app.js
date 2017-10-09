@@ -5,7 +5,8 @@ const greenBlock = document.querySelector("#green"),
       orangeBlock = document.querySelector("#orange"),
       blueBlock = document.querySelector("#blue"),
       startButton = document.querySelector("#start"),
-      resetButton = document.querySelector("#reset");
+      resetButton = document.querySelector("#reset"),
+      arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock];
 
 let turn = 1; 
 
@@ -37,7 +38,7 @@ function startGame(event) {
 function generateSequence(num) {
     const result = [];
     for(let i = 0; i < num; i++) {
-        result.push(generateRandomNumber(4));
+        result.push(generateRandomNumber(arrayOfBlocks.length));
     }
     return result;
 }
@@ -53,20 +54,7 @@ function runSequence(numbers) {
 }
 
 function activateBlockAI(num) {
-    switch(num) {
-        case 0: 
-            changePropertyOfBlock(greenBlock);
-            break;
-        case 1: 
-            changePropertyOfBlock(redBlock);
-            break;
-        case 2: 
-            changePropertyOfBlock(blueBlock);
-            break;
-        case 3: 
-            changePropertyOfBlock(orangeBlock);
-            break;
-    }
+    changePropertyOfBlock(arrayOfBlocks[num]);
 }
 
 function changePropertyOfBlock(event) {
