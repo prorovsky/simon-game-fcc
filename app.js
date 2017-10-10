@@ -6,40 +6,22 @@ const greenBlock = document.querySelector("#green"),
       blueBlock = document.querySelector("#blue"),
       startButton = document.querySelector("#start"),
       resetButton = document.querySelector("#reset"),
-      arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock];
-
-let turn = 1;
-//
-let currentNumbers;
-let playerNumbers;
-let generatedNumbers;
-
-greenBlock.originColor = "darkgreen";
-greenBlock.newColor = "green";
-greenBlock.number = 0;
-redBlock.originColor = "darkred";
-redBlock.newColor = "red";
-redBlock.number = 1;
-blueBlock.originColor = "darkblue";
-blueBlock.newColor = "blue";
-blueBlock.number = 2;
-orangeBlock.originColor = "darkorange";
-orangeBlock.newColor = "orange";
-orangeBlock.number = 3;
-
-greenBlock.addEventListener("click", changePropertyOfBlock);
-redBlock.addEventListener("click", changePropertyOfBlock);
-blueBlock.addEventListener("click", changePropertyOfBlock);
-orangeBlock.addEventListener("click", changePropertyOfBlock);
-startButton.addEventListener("click", startGame);
+      arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock],
+      gameState = Object.seal({
+          turn: 1,
+          strict: false,
+          currentNumbers: [],
+          playerNumbers: [],
+          generatedNumbers: []
+      });
 
 function startGame(event) {
-    generatedNumbers = generateSequence(20);
-    playerNumbers = [];
+    gameState.generatedNumbers = generateSequence(20);
+    gameState.playerNumbers = [];
     
     // game loop
-        currentNumbers = generatedNumbers.slice(0, turn);
-        runSequence(currentNumbers);
+        gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
+        runSequence(gameState.currentNumbers);
 }
 
 function generateSequence(num) {
@@ -71,20 +53,24 @@ function changePropertyOfBlock(event) {
 function changePlayer(block) {
     change(block);
     //
-    playerNumbers.push(block.number);
-    console.log('currentNumbers', currentNumbers);
-    console.log('playerNumbers', playerNumbers);
-    if(isSame(currentNumbers, playerNumbers)) {
+    gameState.playerNumbers.push(block.number);
+    console.log('currentNumbers', gameState.currentNumbers);
+    console.log('playerNumbers', gameState.playerNumbers);
+    if(isSame(gameState.currentNumbers, gameState.playerNumbers)) {
         console.log('good they same');
-        turn++;
-        currentNumbers = generatedNumbers.slice(0, turn);
-        // delay when player complete sequence
-        setTimeout(runSequence.bind(null, currentNumbers), 1000);
-        playerNumbers.length = 0;
-    } else if(!compareArraySeq(currentNumbers, playerNumbers)) {
-        playerNumbers.length = 0;
-        // delay and run this sequence again
-        setTimeout(runSequence.bind(null, currentNumbers), 1000);
+
+        // reset game and show win message
+        if(gameState.turn === 3) {
+            console.log("You Win");
+        }
+
+        gameState.turn += 1;
+        gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
+        delayAndRunSequenceAgain(1000);
+        gameState.playerNumbers.length = 0;
+    } else if(!compareArraySeq(gameState.currentNumbers, gameState.playerNumbers)) {
+        gameState.playerNumbers.length = 0;
+        gameState.strict ? resetGame() : delayAndRunSequenceAgain(1000);
         console.log('bad');
         // then get here message about wrong sequence
     }
@@ -117,6 +103,22 @@ function changeColorBlockToOrigin(colorBlock) {
     enableEvents();
 }
 
+function resetGame() {
+    resetGameState();
+    delayAndRunSequenceAgain(1500);
+}
+
+function resetGameState() {
+    gameState.turn = 1;
+    gameState.generatedNumbers = generateSequence(20);
+    gameState.playerNumbers.length = 0;
+    gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
+}
+
+function delayAndRunSequenceAgain(ms) {
+    setTimeout(runSequence.bind(null, gameState.currentNumbers), ms);
+}
+
 function changeColorOfBlock(colorBlock) {
     colorBlock.style.backgroundColor = colorBlock.newColor;
 }
@@ -146,3 +148,37 @@ function enableEvents() {
     orangeBlock.style.pointerEvents = 'auto';
     greenBlock.style.pointerEvents = 'auto';
 }
+
+(function prepareGame(aob) {
+    aob.forEach(block => {
+        switch(block.id) {
+            case "green":
+                setBlockProperty(block, "darkgreen", "green", 0);
+                break;
+            case "red":
+                setBlockProperty(block, "darkred", "red", 1);
+                break;
+            case "blue":
+                setBlockProperty(block, "darkblue", "blue", 2);
+                break;
+            case "orange":
+                setBlockProperty(block, "darkorange", "orange", 3);
+                break;
+        }
+    });
+    setEventsToButtons();
+
+
+    function setBlockProperty(block, originColor, newColor, number) {
+        block.originColor = originColor;
+        block.newColor = newColor;
+        block.number = number;
+    }
+
+    function setEventsToButtons() {
+        aob.forEach(block => block.addEventListener("click", changePropertyOfBlock));
+        startButton.addEventListener("click", startGame);
+        resetButton.addEventListener("click", resetGame);
+    }
+
+}(arrayOfBlocks));
