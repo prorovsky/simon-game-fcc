@@ -6,6 +6,7 @@ const greenBlock = document.querySelector("#green"),
       blueBlock = document.querySelector("#blue"),
       startButton = document.querySelector("#start"),
       resetButton = document.querySelector("#reset"),
+      strictMode = document.querySelector("#strictMode"),
       arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock],
       gameState = Object.seal({
           turn: 1,
@@ -22,6 +23,10 @@ function startGame(event) {
     // game loop
         gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
         runSequence(gameState.currentNumbers);
+}
+
+function setStrictMode(event) {
+    gameState.strict = event.target.checked;
 }
 
 function generateSequence(num) {
@@ -50,6 +55,7 @@ function changePropertyOfBlock(event) {
     event.target ? changePlayer(event.target) : change(event);
 }
 
+//===================================
 function changePlayer(block) {
     change(block);
     //
@@ -75,7 +81,8 @@ function changePlayer(block) {
         // then get here message about wrong sequence
     }
 }
-// get better name to this function this is predicate 
+//======================================================
+
 function compareArraySeq(arr1, arr2) {
     return arr1.slice(0, arr2.length).join(' ') == arr2.slice(0, arr1.length).join(' ');
 }
@@ -168,7 +175,6 @@ function enableEvents() {
     });
     setEventsToButtons();
 
-
     function setBlockProperty(block, originColor, newColor, number) {
         block.originColor = originColor;
         block.newColor = newColor;
@@ -179,6 +185,7 @@ function enableEvents() {
         aob.forEach(block => block.addEventListener("click", changePropertyOfBlock));
         startButton.addEventListener("click", startGame);
         resetButton.addEventListener("click", resetGame);
+        strictMode.addEventListener("change", setStrictMode);
     }
 
 }(arrayOfBlocks));
