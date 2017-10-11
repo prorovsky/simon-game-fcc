@@ -94,6 +94,7 @@ function isSame(arr1, arr2) {
 }
 
 function change(block) {
+    playSound(block);
     changeColorOfBlock(block);
     changeSizeOfBlock(block);
     disableEvents();
@@ -124,6 +125,10 @@ function resetGameState() {
 
 function delayAndRunSequenceAgain(ms) {
     setTimeout(runSequence.bind(null, gameState.currentNumbers), ms);
+}
+
+function playSound(colorBlock) {
+    colorBlock.sound.play();
 }
 
 function changeColorOfBlock(colorBlock) {
@@ -157,28 +162,55 @@ function enableEvents() {
 }
 
 (function prepareGame(aob) {
+
+    const greenProperty = {
+        originColor: "darkgreen",
+        newColor: "green",
+        number: 0,
+        sound: 'https://s3.amazonaws.com/freecodecamp/simonSound1.mp3'
+    },
+    redProperty = {
+        originColor: "darkred",
+        newColor: "red",
+        number: 1,
+        sound: 'https://s3.amazonaws.com/freecodecamp/simonSound2.mp3'
+    }, 
+    blueProperty = {
+        originColor: "darkblue",
+        newColor: "blue",
+        number: 2,
+        sound: 'https://s3.amazonaws.com/freecodecamp/simonSound3.mp3'
+    },
+    orangeProperty = {
+        originColor: "darkorange",
+        newColor: "orange",
+        number: 3,
+        sound: 'https://s3.amazonaws.com/freecodecamp/simonSound4.mp3'
+    };
+
     aob.forEach(block => {
         switch(block.id) {
             case "green":
-                setBlockProperty(block, "darkgreen", "green", 0);
+                setBlockProperty(block, greenProperty);
                 break;
             case "red":
-                setBlockProperty(block, "darkred", "red", 1);
+                setBlockProperty(block, redProperty);
                 break;
             case "blue":
-                setBlockProperty(block, "darkblue", "blue", 2);
+                setBlockProperty(block, blueProperty);
                 break;
             case "orange":
-                setBlockProperty(block, "darkorange", "orange", 3);
+                setBlockProperty(block, orangeProperty);
                 break;
         }
     });
     setEventsToButtons();
 
-    function setBlockProperty(block, originColor, newColor, number) {
-        block.originColor = originColor;
-        block.newColor = newColor;
-        block.number = number;
+    function setBlockProperty(block, propertyObj) {
+        block.originColor = propertyObj.originColor;
+        block.newColor = propertyObj.newColor;
+        block.number = propertyObj.number;
+        block.sound = new Audio(propertyObj.sound);
     }
 
     function setEventsToButtons() {
@@ -187,5 +219,8 @@ function enableEvents() {
         resetButton.addEventListener("click", resetGame);
         strictMode.addEventListener("change", setStrictMode);
     }
+
+    //var audio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3');
+    //audio.play();
 
 }(arrayOfBlocks));
