@@ -63,25 +63,23 @@ function changePropertyOfBlock(event) {
 //===================================
 function changePlayer(block) {
     change(block);
-    //
+    
     gameState.playerNumbers.push(block.number);
-    console.log('currentNumbers', gameState.currentNumbers);
-    console.log('playerNumbers', gameState.playerNumbers);
     if(isSame(gameState.currentNumbers, gameState.playerNumbers)) {
-        console.log('good they same');
-
         // reset game and show win message
         if(gameState.turn === 20) {
-            writeGameMessage("You Win!");
+            writeGameMessage("You Win!", "alert-success", "alert-danger",);
             if(confirm("Do you want to continue?")) {
-                writeGameMessage('Go as much as you can!');
+                writeGameMessage("Go as much as you can!", "alert-success", "alert-danger",);
                 setTimeout(clearGameMessage, 2000);
             } else {
                 stopGame();
                 setTimeout(clearGameMessage, 2000);
+                return;
             };
         }
 
+        count.innerHTML = gameState.turn;
         gameState.turn += 1;
         gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
         delayAndRunSequenceAgain(1000);
@@ -89,10 +87,8 @@ function changePlayer(block) {
     } else if(!compareArraySeq(gameState.currentNumbers, gameState.playerNumbers)) {
         gameState.playerNumbers.length = 0;
         gameState.strict ? resetGame() : delayAndRunSequenceAgain(1000);
-        console.log('bad');
-        writeGameMessage("Wrong!");
+        writeGameMessage("Wrong!", "alert-danger", "alert-success");
         setTimeout(clearGameMessage, 1000);
-        // then get here message about wrong sequence
     }
 }
 //======================================================
@@ -102,7 +98,9 @@ function compareArraySeq(arr1, arr2) {
 }
 
 function stopGame() {
+    gameState.turn = 1;
     gameState.generatedNumbers.length = 0;
+    count.innerHTML = gameState.turn - 1;
     disableEvents();
 }
 
@@ -112,7 +110,9 @@ function isSame(arr1, arr2) {
     });
 }
 
-function writeGameMessage(text) {
+function writeGameMessage(text, style, oldStyle) {
+    gameMessage.classList.remove(oldStyle);
+    gameMessage.classList.add(style);
     gameMessage.innerHTML = text;
 }
 
@@ -145,6 +145,7 @@ function resetGame() {
 
 function resetGameState() {
     gameState.turn = 1;
+    count.innerHTML = gameState.turn - 1;
     gameState.generatedNumbers = generateSequence(20);
     gameState.playerNumbers.length = 0;
     gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
@@ -163,7 +164,7 @@ function changeColorOfBlock(colorBlock) {
 }
 
 function changeSizeOfBlock(colorBlock) {
-    colorBlock.style.transform = ("scale(1.09, 1.09)");
+    colorBlock.style.transform = ("scale(1.09, 1.16)");
 }
 
 function changeColorToOrigin(colorBlock) {
