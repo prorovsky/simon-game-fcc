@@ -4,9 +4,11 @@ const greenBlock = document.querySelector("#green"),
       redBlock = document.querySelector("#red"),
       orangeBlock = document.querySelector("#orange"),
       blueBlock = document.querySelector("#blue"),
+      count = document.querySelector("#count"),
       startButton = document.querySelector("#start"),
       resetButton = document.querySelector("#reset"),
-      strictMode = document.querySelector("#strictMode"),
+      strictMode = document.querySelector("#strict-mode"),
+      gameMessage = document.querySelector("#game-message"),
       arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock],
       gameState = Object.seal({
           turn: 1,
@@ -16,7 +18,10 @@ const greenBlock = document.querySelector("#green"),
           generatedNumbers: []
       });
 
+disableEvents();
+
 function startGame(event) {
+    enableEvents();
     gameState.generatedNumbers = generateSequence(20);
     gameState.playerNumbers = [];
     
@@ -66,8 +71,15 @@ function changePlayer(block) {
         console.log('good they same');
 
         // reset game and show win message
-        if(gameState.turn === 3) {
-            console.log("You Win");
+        if(gameState.turn === 20) {
+            writeGameMessage("You Win!");
+            if(confirm("Do you want to continue?")) {
+                writeGameMessage('Go as much as you can!');
+                setTimeout(clearGameMessage, 2000);
+            } else {
+                stopGame();
+                setTimeout(clearGameMessage, 2000);
+            };
         }
 
         gameState.turn += 1;
@@ -78,6 +90,8 @@ function changePlayer(block) {
         gameState.playerNumbers.length = 0;
         gameState.strict ? resetGame() : delayAndRunSequenceAgain(1000);
         console.log('bad');
+        writeGameMessage("Wrong!");
+        setTimeout(clearGameMessage, 1000);
         // then get here message about wrong sequence
     }
 }
@@ -87,10 +101,23 @@ function compareArraySeq(arr1, arr2) {
     return arr1.slice(0, arr2.length).join(' ') == arr2.slice(0, arr1.length).join(' ');
 }
 
+function stopGame() {
+    gameState.generatedNumbers.length = 0;
+    disableEvents();
+}
+
 function isSame(arr1, arr2) {
     return arr1.every((el, index) => {
        return el === arr2[index];
     });
+}
+
+function writeGameMessage(text) {
+    gameMessage.innerHTML = text;
+}
+
+function clearGameMessage() {
+    gameMessage.innerHTML = "";
 }
 
 function change(block) {
@@ -219,8 +246,5 @@ function enableEvents() {
         resetButton.addEventListener("click", resetGame);
         strictMode.addEventListener("change", setStrictMode);
     }
-
-    //var audio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3');
-    //audio.play();
 
 }(arrayOfBlocks));
