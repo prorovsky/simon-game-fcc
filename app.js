@@ -9,7 +9,7 @@ const greenBlock = document.querySelector("#green"),
       resetButton = document.querySelector("#reset"),
       strictMode = document.querySelector("#strict-mode"),
       gameMessage = document.querySelector("#game-message"),
-      requiredTurns = 3,
+      requiredTurns = 20,
       arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock],
       gameState = Object.seal({
           turn: 1,
