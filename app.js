@@ -9,6 +9,7 @@ const greenBlock = document.querySelector("#green"),
       resetButton = document.querySelector("#reset"),
       strictMode = document.querySelector("#strict-mode"),
       gameMessage = document.querySelector("#game-message"),
+      requiredTurns = 3,
       arrayOfBlocks = [greenBlock, redBlock, blueBlock, orangeBlock],
       gameState = Object.seal({
           turn: 1,
@@ -24,10 +25,8 @@ function startGame(event) {
     enableEvents();
     gameState.generatedNumbers = generateSequence(20);
     gameState.playerNumbers = [];
-    
-    // game loop
-        gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
-        runSequence(gameState.currentNumbers);
+    gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
+    runSequence(gameState.currentNumbers);
 }
 
 function setStrictMode(event) {
@@ -60,48 +59,62 @@ function changePropertyOfBlock(event) {
     event.target ? changePlayer(event.target) : change(event);
 }
 
-//===================================
 function changePlayer(block) {
     change(block);
-    
     gameState.playerNumbers.push(block.number);
     if(isSame(gameState.currentNumbers, gameState.playerNumbers)) {
-        // reset game and show win message
-        if(gameState.turn === 20) {
-            writeGameMessage("You Win!", "alert-success", "alert-danger",);
-            if(confirm("Do you want to continue?")) {
-                writeGameMessage("Go as much as you can!", "alert-success", "alert-danger",);
-                setTimeout(clearGameMessage, 2000);
-            } else {
-                stopGame();
-                setTimeout(clearGameMessage, 2000);
-                return;
-            };
-        }
-
-        count.innerHTML = gameState.turn;
-        gameState.turn += 1;
-        gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
-        delayAndRunSequenceAgain(1000);
-        gameState.playerNumbers.length = 0;
+        isPlayerWin();
+        handleRightMove();
     } else if(!compareArraySeq(gameState.currentNumbers, gameState.playerNumbers)) {
-        gameState.playerNumbers.length = 0;
-        gameState.strict ? resetGame() : delayAndRunSequenceAgain(1000);
-        writeGameMessage("Wrong!", "alert-danger", "alert-success");
-        setTimeout(clearGameMessage, 1000);
+        handleErrorMove();   
     }
 }
-//======================================================
 
 function compareArraySeq(arr1, arr2) {
     return arr1.slice(0, arr2.length).join(' ') == arr2.slice(0, arr1.length).join(' ');
 }
 
+function isPlayerWin() {
+    if(gameState.turn === requiredTurns) {
+        writeGameMessage("You Win!", "alert-success", "alert-danger");
+        confirm("Do you want to continue?") ? continueGame() : stopGame();
+    }
+}
+
+function handleRightMove() {
+    count.innerHTML = gameState.turn;
+    gameState.turn += 1;
+    gameState.currentNumbers = gameState.generatedNumbers.slice(0, gameState.turn);
+    delayAndRunSequenceAgain(1000);
+    gameState.playerNumbers.length = 0;
+}
+
+function handleErrorMove() {
+    gameState.playerNumbers.length = 0;
+    gameState.strict ? resetGame() : delayAndRunSequenceAgain(1000);
+    writeGameMessage("Wrong!", "alert-danger", "alert-success");
+    setTimeout(clearGameMessage, 1000);
+}
+
+function continueGame() {
+    writeGameMessage("Go as much as you can!", "alert-success", "alert-danger");
+    setTimeout(clearGameMessage, 2000);
+}
+
 function stopGame() {
     gameState.turn = 1;
     gameState.generatedNumbers.length = 0;
-    count.innerHTML = gameState.turn - 1;
-    disableEvents();
+    count.innerHTML = 0;
+    setTimeout(clearGameMessage, 2000);
+    removeEvents();
+}
+
+function removeEvents() {
+    arrayOfBlocks.forEach(block => {
+        block.removeEventListener("click", changePropertyOfBlock);
+    });
+    startButton.removeEventListener("click", startGame);
+    resetButton.removeEventListener("click", resetGame);
 }
 
 function isSame(arr1, arr2) {
